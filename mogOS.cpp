@@ -15,6 +15,19 @@ void mkdir(Folder* currentDirectory, string name) {
     currentDirectory->children.push_back(folder);
 }
 
+void cd(Folder* currentDirectory, string moveTo) {
+    Folder* address = search(currentDirectory, moveTo);
+    if(moveTo == "..") {
+        // move up
+    }
+    if(address != nullptr) {
+        // move to
+    }
+    else {
+        // return error
+    }
+}
+
 Folder* search(Folder* currentDirectory, string searchFolder) {
     if(currentDirectory->name == searchFolder) {
         cout << "found: " << currentDirectory->name << " at " << currentDirectory << endl;
@@ -63,6 +76,9 @@ void input(Folder* currentDirectory) {
         }
         else if(command[0] == "mkdir") {
             mkdir(currentDirectory, command[1]);
+        }
+        else if(command[0] == "cd") {
+            cd(currentDirectory, command[1]);
         }
         else {
             cout << "command \"" << command[0] << "\" not found" << endl;
