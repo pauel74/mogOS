@@ -27,7 +27,7 @@ Folder* search(Folder* currentDirectory, string searchFolder) {
 }
 
 void help() {
-    cout << "\ncommands:\n-mkdir\n-ls\n-cd\n-clear\n\n";
+    cout << "\ncommands:\n-mkdir\n-cd\n-rm\n-ls\n-clear\n-exit\n\n";
 }
 
 void mkdir(Folder* currentDirectory, string name) {
@@ -35,28 +35,34 @@ void mkdir(Folder* currentDirectory, string name) {
     folder->name = name;
     folder->parent = currentDirectory;
     currentDirectory->children.push_back(folder);
+    cout << "created \"" << name <<"\" successfully\n";
 }
 
 Folder* rm(Folder* currentDirectory, string name) {
     for(int i = 0; i < currentDirectory->children.size(); i++) {
         if(currentDirectory->children[i]->name == name) {
             delete currentDirectory->children[i];
-            //erase!
+            currentDirectory->children.erase( // cant just remove i because it expects iterator
+                currentDirectory->children.begin() +i
+            );
+            cout << "removed \"" << name <<"\" successfully\n"; 
+            return currentDirectory;
         }
     }
+    cout << "\"" << name <<"\" was not found\n"; 
     return currentDirectory;
 }
 
 Folder* cd(Folder* currentDirectory, string moveTo) {
-    Folder* address = search(currentDirectory, moveTo);
     if(moveTo == "..") {
         return currentDirectory->parent;
     }
-    if(address != nullptr) {
-        return address;
+    else if(search(currentDirectory, moveTo) == nullptr) {
+        cout << "\"" << moveTo <<"\" was not found\n";
+        return currentDirectory;
     }
     else {
-        return nullptr;
+        return search(currentDirectory, moveTo);
     }
 }
 
@@ -73,7 +79,9 @@ Folder* input(Folder* currentDirectory) {
     string input;
     cout << currentDirectory->name << " > ";
 
-    getline(cin, input);
+    if(!getline(cin, input)) {
+        return nullptr;
+    }
     stringstream ss(input);
     string part;
     vector<string> command;
@@ -88,14 +96,25 @@ Folder* input(Folder* currentDirectory) {
         if(command[0] == "clear") {
             system("clear");
         }
+        else if(command[0] == "exit") {
+            return nullptr;
+        }
         else if(command[0] == "ls") {
             ls(currentDirectory);
         }
         else if(command[0] == "mkdir") {
+            if(command.size() != 2) {
+                cout << "mkdir expects exactly one argument\n";
+                return currentDirectory;
+            }
             mkdir(currentDirectory, command[1]);
         }
         else if(command[0] == "cd") {
-            if(currentDirectory->name == "/" && command[1] == "..") {
+            if(command.size() != 2) {
+                cout << "cd expects exactly one argument\n";
+                return currentDirectory;
+            }
+            else if(currentDirectory->name == "/" && command[1] == "..") {
                 cout << "cant move over root" << endl;
                 return currentDirectory;
             }
@@ -103,6 +122,10 @@ Folder* input(Folder* currentDirectory) {
             return currentDirectory;
         }
         else if(command[0] == "rm") {
+            if(command.size() != 2) {
+                cout << "rm expects exactly one argument\n";
+                return currentDirectory;
+            }
             currentDirectory = rm(currentDirectory, command[1]);
         }
         else if(command[0] == "help") {
@@ -130,7 +153,9 @@ int main() {
 
     system("clear");
     while(true) {
-        currentDirectory = input(currentDirectory);
+        Folder* result = input(currentDirectory);
+        if(result == nullptr) {break;}
+        currentDirectory = result;
     }
 
     return 0;
