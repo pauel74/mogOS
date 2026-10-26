@@ -40,8 +40,12 @@ void mkdir(Folder* currentDirectory, string name) {
 
 Folder* rm(Folder* currentDirectory, string name) {
     for(int i = 0; i < currentDirectory->children.size(); i++) {
-        if(currentDirectory->children[i]->name == name) {
-            delete currentDirectory->children[i];
+        Folder* child = currentDirectory->children[i];
+        if(currentDirectory->children[i]->name == name) { // deletes all childs from memory
+            while(!child->children.empty()) {
+                rm(child, child->children[0]->name);
+            }
+            delete child;
             currentDirectory->children.erase( // cant just remove i because it expects iterator
                 currentDirectory->children.begin() +i
             );
@@ -152,9 +156,12 @@ int main() {
     Folder* currentDirectory = root.children[0];
 
     system("clear");
+    cout << "welcome to mogOS\ntype \"help\" for help\n\n";
     while(true) {
         Folder* result = input(currentDirectory);
-        if(result == nullptr) {break;}
+        if(result == nullptr) {
+            break;
+        }
         currentDirectory = result;
     }
 
