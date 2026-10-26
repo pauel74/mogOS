@@ -7,30 +7,18 @@ using namespace std;
 struct Folder {
     string name;
     vector<Folder*> children;
+    Folder* parent;
 };
 
 void mkdir(Folder* currentDirectory, string name) {
     Folder* folder = new Folder; // create object called folder and returns pointer
     folder->name = name;
+    folder->parent = currentDirectory;
     currentDirectory->children.push_back(folder);
-}
-
-void cd(Folder* currentDirectory, string moveTo) {
-    Folder* address = search(currentDirectory, moveTo);
-    if(moveTo == "..") {
-        // move up
-    }
-    if(address != nullptr) {
-        // move to
-    }
-    else {
-        // return error
-    }
 }
 
 Folder* search(Folder* currentDirectory, string searchFolder) {
     if(currentDirectory->name == searchFolder) {
-        cout << "found: " << currentDirectory->name << " at " << currentDirectory << endl;
         return currentDirectory;
     }
     for(int i = 0; i<currentDirectory->children.size(); i++) {
@@ -45,14 +33,29 @@ Folder* search(Folder* currentDirectory, string searchFolder) {
     return nullptr;
 }
 
+Folder* cd(Folder* currentDirectory, string moveTo) {
+    Folder* address = search(currentDirectory, moveTo);
+    if(moveTo == "..") {
+        return currentDirectory->parent;
+    }
+    if(address != nullptr) {
+        return address;
+    }
+    else {
+        return nullptr;
+    }
+}
+
 void ls(Folder* currentDirectory) {
     for(int i = 0; i<currentDirectory->children.size(); i++) {
         cout << currentDirectory->children[i]->name << " ";
+        if(i ==  currentDirectory->children.size()-1) {
+            cout << endl;
+        }
     }
-    cout << endl;
 }
 
-void input(Folder* currentDirectory) {
+Folder* input(Folder* currentDirectory) {
     string input;
     cout << currentDirectory->name << " > ";
 
@@ -78,13 +81,14 @@ void input(Folder* currentDirectory) {
             mkdir(currentDirectory, command[1]);
         }
         else if(command[0] == "cd") {
-            cd(currentDirectory, command[1]);
+            currentDirectory = cd(currentDirectory, command[1]);
+            return currentDirectory;
         }
         else {
             cout << "command \"" << command[0] << "\" not found" << endl;
         }
     }
-
+    return currentDirectory;
 }
 
 int main() {
@@ -101,7 +105,7 @@ int main() {
     Folder* currentDirectory = root.children[0];
 
     while(true) {
-        input(currentDirectory);
+        currentDirectory = input(currentDirectory);
     }
 
     return 0;
