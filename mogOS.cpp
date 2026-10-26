@@ -10,13 +10,6 @@ struct Folder {
     Folder* parent;
 };
 
-void mkdir(Folder* currentDirectory, string name) {
-    Folder* folder = new Folder; // create object called folder and returns pointer
-    folder->name = name;
-    folder->parent = currentDirectory;
-    currentDirectory->children.push_back(folder);
-}
-
 Folder* search(Folder* currentDirectory, string searchFolder) {
     if(currentDirectory->name == searchFolder) {
         return currentDirectory;
@@ -31,6 +24,27 @@ Folder* search(Folder* currentDirectory, string searchFolder) {
         }
     }
     return nullptr;
+}
+
+void help() {
+    cout << "\ncommands:\n-mkdir\n-ls\n-cd\n-clear\n\n";
+}
+
+void mkdir(Folder* currentDirectory, string name) {
+    Folder* folder = new Folder; // create object called folder and returns pointer
+    folder->name = name;
+    folder->parent = currentDirectory;
+    currentDirectory->children.push_back(folder);
+}
+
+Folder* rm(Folder* currentDirectory, string name) {
+    for(int i = 0; i < currentDirectory->children.size(); i++) {
+        if(currentDirectory->children[i]->name == name) {
+            delete currentDirectory->children[i];
+            //erase!
+        }
+    }
+    return currentDirectory;
 }
 
 Folder* cd(Folder* currentDirectory, string moveTo) {
@@ -81,8 +95,18 @@ Folder* input(Folder* currentDirectory) {
             mkdir(currentDirectory, command[1]);
         }
         else if(command[0] == "cd") {
+            if(currentDirectory->name == "/" && command[1] == "..") {
+                cout << "cant move over root" << endl;
+                return currentDirectory;
+            }
             currentDirectory = cd(currentDirectory, command[1]);
             return currentDirectory;
+        }
+        else if(command[0] == "rm") {
+            currentDirectory = rm(currentDirectory, command[1]);
+        }
+        else if(command[0] == "help") {
+            help();
         }
         else {
             cout << "command \"" << command[0] << "\" not found" << endl;
@@ -104,6 +128,7 @@ int main() {
 
     Folder* currentDirectory = root.children[0];
 
+    system("clear");
     while(true) {
         currentDirectory = input(currentDirectory);
     }
