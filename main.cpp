@@ -41,8 +41,8 @@ void mkdir(Folder* currentDirectory, string name) {
 Folder* rm(Folder* currentDirectory, string name) {
     for(int i = 0; i < currentDirectory->children.size(); i++) {
         Folder* child = currentDirectory->children[i];
-        if(currentDirectory->children[i]->name == name) { // deletes all childs from memory
-            while(!child->children.empty()) {
+        if(currentDirectory->children[i]->name == name) { 
+            while(!child->children.empty()) { // deletes all childs from memory
                 rm(child, child->children[0]->name);
             }
             delete child;
@@ -157,6 +157,7 @@ int main() {
 
     system("clear");
     cout << "welcome to mogOS\ntype \"help\" for help\n\n";
+    
     while(true) {
         Folder* result = input(currentDirectory);
         if(result == nullptr) {
@@ -164,6 +165,6 @@ int main() {
         }
         currentDirectory = result;
     }
-
+    
     return 0;
 }
