@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <string>
 #include <sstream>
 using namespace std;
 
@@ -78,8 +79,26 @@ Folder* rm(Folder* currentDirectory, string name) {
 }
 
 Folder* cd(Folder* currentDirectory, string moveTo) {
-    if(moveTo == "..") {
-        return currentDirectory->parent;
+    int dotInStr = 0;
+    for(char c : moveTo) {
+        if(c == '.') {
+            dotInStr++;
+        }
+    }
+    if(moveTo == "/") {
+        while(currentDirectory->name != "/") {
+            currentDirectory = currentDirectory->parent;
+        }
+    }
+    if(dotInStr>0) {
+        dotInStr /= 2;
+        for(int i = 0; i<dotInStr; i++) {
+            if(currentDirectory->name == "/") {
+                cout << "cant move over root" << endl;
+                return currentDirectory;
+            }
+            currentDirectory = currentDirectory->parent;
+        }
     }
     else if(search(currentDirectory, moveTo) == nullptr) {
         cout << "\"" << moveTo <<"\" was not found\n";
@@ -88,6 +107,7 @@ Folder* cd(Folder* currentDirectory, string moveTo) {
     else {
         return search(currentDirectory, moveTo);
     }
+    return currentDirectory;
 }
 
 void ls(Folder* currentDirectory) {
