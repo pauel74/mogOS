@@ -110,7 +110,16 @@ Folder* cd(Folder* currentDirectory, string moveTo) {
     return currentDirectory;
 }
 
-void ls(Folder* currentDirectory) {
+void ls(Folder* currentDirectory, string name) {
+    if(name != "") {
+        if(search(currentDirectory, name) == nullptr) {
+            cout << "\"" << name <<"\" was not found\n";
+            return;
+        }
+        else {
+            currentDirectory = search(currentDirectory, name);
+        }
+    }
     for(int i = 0; i<currentDirectory->children.size(); i++) {
         cout << currentDirectory->children[i]->name << " ";
         if(i ==  currentDirectory->children.size()-1) {
@@ -147,7 +156,15 @@ Folder* input(Folder* currentDirectory) {
             return nullptr;
         }
         else if(command[0] == "ls") {
-            ls(currentDirectory);
+            if(command.size() == 1) {
+                ls(currentDirectory, "");
+            }
+            else if(command.size() == 2) {
+                ls(currentDirectory, command[1]);
+            }
+            else {
+                cout << "ls expects either zero or one argument\n"; 
+            }
         }
         else if(command[0] == "mkdir") {
             if(command.size() != 2) {
