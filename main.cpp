@@ -27,7 +27,27 @@ Folder* search(Folder* currentDirectory, string searchFolder) {
 }
 
 void help() {
-    cout << "\ncommands:\n-mkdir\n-cd\n-rm\n-ls\n-clear\n-exit\n\n";
+    cout << "\ncommands:\n-pwd\n-mkdir\n-cd\n-rm\n-ls\n-clear\n-exit\n\n";
+}
+
+void pwd(Folder* currentDirectory) {
+    if(currentDirectory->name == "/") {
+    cout << "/" << endl;
+    return;
+    }
+    
+    vector<string> path;
+    
+    while(currentDirectory->name != "/") {
+        path.push_back(currentDirectory->name);
+        currentDirectory = currentDirectory->parent;
+    }
+    
+    for(int i = 0; i < path.size(); i++) {
+        cout << "/" << path[(path.size() -1 -i)];
+    }
+    
+    cout << endl;
 }
 
 void mkdir(Folder* currentDirectory, string name) {
@@ -99,6 +119,9 @@ Folder* input(Folder* currentDirectory) {
     if(command.size() != 0) {
         if(command[0] == "clear") {
             system("clear");
+        }
+        else if(command[0] == "pwd") {
+            pwd(currentDirectory);
         }
         else if(command[0] == "exit") {
             return nullptr;
