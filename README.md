@@ -5,6 +5,7 @@ _mogOS is a small personal project created to learn C++, pointers, recursion, an
 
 ## Features
 
+- `pwd` Display the current path
 - `mkdir` Create a new folder
 - `cd` Navigate between folders (cd .. to move up)
 - `rm` Remove a folder and its contents
@@ -27,10 +28,11 @@ g++ main.cpp -o mogOS
 
 ## Future Updates
 
-- [ ] `pwd` to display current path
 - [ ] `tree` command to visualize the folder structure
 - [ ] `mv` to move and/or rename files
 - [ ] Prevent duplicate folder names
+- [ ] Navigating multiple levels up with `cd ../..`
+- [ ] Listing the contents of child directories with `ls folder`
 
 ### Maybe
 - [ ] Custom fetch command to display system information
