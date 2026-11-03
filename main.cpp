@@ -28,7 +28,7 @@ Folder* search(Folder* currentDirectory, string searchFolder) {
 }
 
 void help() {
-    cout << "\ncommands:\n-pwd\n-mkdir\n-cd\n-rm\n-ls\n-clear\n-exit\n\n";
+    cout << "\ncommands:\n-pwd (show current dir)\n-mkdir (create new dir)\n-cd (change dir)\n-rm (remove dir)\n-ls (list content of dir)\n-mv (move (and rename) dir)\n-clear (clear the screen)\n-exit (exit mogOs)\n\n";
 }
 
 void pwd(Folder* currentDirectory) {
@@ -51,14 +51,6 @@ void pwd(Folder* currentDirectory) {
     cout << endl;
 }
 
-void mkdir(Folder* currentDirectory, string name) {
-    Folder* folder = new Folder; // create object called folder and returns pointer
-    folder->name = name;
-    folder->parent = currentDirectory;
-    currentDirectory->children.push_back(folder);
-    cout << "created \"" << name <<"\" successfully\n";
-}
-
 Folder* rm(Folder* currentDirectory, string name) {
     for(int i = 0; i < currentDirectory->children.size(); i++) {
         Folder* child = currentDirectory->children[i];
@@ -75,6 +67,78 @@ Folder* rm(Folder* currentDirectory, string name) {
         }
     }
     cout << "\"" << name <<"\" was not found\n"; 
+    return currentDirectory;
+}   
+
+void mkdir(Folder* currentDirectory, string name) {
+    if(name == "/") {
+        cout << "cant create second root" << endl;
+        return;
+    }
+    if(search(currentDirectory, name) != nullptr) {
+        cout << "\"" << name <<"\" already exists\n";
+        return;
+    }
+    Folder* folder = new Folder; // create object called folder and returns pointer
+    folder->name = name;
+    folder->parent = currentDirectory;
+    currentDirectory->children.push_back(folder);
+    cout << "created \"" << name <<"\" successfully\n";
+}
+
+
+Folder* mv(Folder* currentDirectory, string name, string targetLocation, string newName) {
+
+    Folder* targetPtr = search(currentDirectory, name);
+
+    if(targetPtr == nullptr) {
+        cout << "\"" << name << "\" was not found\n";
+        return currentDirectory;
+    }
+
+    // create root pointer
+    Folder* root = currentDirectory;
+    while(root->parent != nullptr) {
+        root = root->parent;
+    }
+
+    Folder* targetPosition = search(root, targetLocation);
+
+    if(targetPosition == nullptr) {
+        cout << "\"" << targetLocation << "\" was not found\n";
+        return currentDirectory;
+    }
+
+    // dont move into itself
+    Folder* temp = targetPosition;
+    while(temp->name != "/") {
+        if(temp == targetPtr) {
+            cout << "Cannot move folder into itself\n";
+            return currentDirectory;
+        }
+        temp = temp->parent;
+    }
+
+    // dont rename
+    if(newName == "keep") {
+        newName = name;
+    }
+
+    Folder* oldParent = targetPtr->parent;
+
+    for(int i = 0; i < oldParent->children.size(); i++) {
+        if(oldParent->children[i] == targetPtr) {
+            oldParent->children.erase(oldParent->children.begin() + i);
+            break;
+        }
+    }
+
+    targetPtr->parent = targetPosition;
+    targetPtr->name = newName;
+    targetPosition->children.push_back(targetPtr);
+
+    cout << "Moved \"" << name << "\" into \"" << newName << "\" successfully\n";
+
     return currentDirectory;
 }
 
@@ -195,6 +259,23 @@ Folder* input(Folder* currentDirectory) {
         else if(command[0] == "help") {
             help();
         }
+        else if(command[0] == "mv") {
+
+            if(command.size() != 3 && command.size() != 4) {
+                cout << "mv expects either two or three arguments\n";
+                return currentDirectory;
+            }
+
+            string name = command[1];
+            string target = command[2];
+            string newName;
+            if(command.size() == 3) {
+                newName = "keep";
+            }
+            else {newName = command[3];}
+
+            currentDirectory = mv(currentDirectory, name, target, newName);
+        }
         else {
             cout << "command \"" << command[0] << "\" not found" << endl;
         }
@@ -205,6 +286,7 @@ Folder* input(Folder* currentDirectory) {
 int main() {
     Folder root;
     root.name = "/";
+    root.parent = nullptr;
 
     mkdir(&root, "home");
     mkdir(root.children[0], "Documents");
