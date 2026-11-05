@@ -197,11 +197,11 @@ void tree(Folder* currentDirectory, int depth) {
         while(currentDirectory->name != "/") {
             currentDirectory = currentDirectory->parent;
         }
-        cout << currentDirectory->name << endl;
+        cout << "/root" << endl;
     }
     for(int i = 0; i<currentDirectory->children.size(); i++) {
         for(int j = 0; j<depth+1; j++) {
-            cout << "\t";
+            cout << "   ";
         }
         cout << currentDirectory->children[i]->name << endl;
         tree(currentDirectory->children[i], depth+1);
@@ -224,6 +224,8 @@ Folder* input(Folder* currentDirectory) {
     while(getline(ss, part, ' ')) {
         command.push_back(part);
     }
+
+    cout << "\033[35m";
 
     if(command.size() != 0) {
         if(command[0] == "clear") {
@@ -300,6 +302,7 @@ Folder* input(Folder* currentDirectory) {
             cout << "command \"" << command[0] << "\" not found" << endl;
         }
     }
+    cout << "\033[0m";
     return currentDirectory;
 }
 
@@ -318,7 +321,26 @@ int main() {
     Folder* currentDirectory = root.children[0];
 
     system("clear");
-    cout << "welcome to mogOS\ntype \"help\" for help\n\n";
+    cout << R"(
+    ⠀⠀⠀ ⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡾⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⡼⠙⣧⡀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠃⢹⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢰⠃⠀⠘⣿⡄⠀⠀⠀⠀⠀⠀⢀⣿⡇⠀⠘⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⢹⣿⣆⠀⠀⠀⠀⠀⣼⣿⠁⠀⠀⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⡇⠀⠀⢀⠞⢻⣿⡆⠀⠀⠀⢰⣿⣿⡀⠀⠀⢹⡄⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⡇⠀⢰⠋⠀⠈⣿⣿⡄⠀⠀⣾⣿⡇⠹⡄⠀⢨⡇⠀⠀
+⠀⠀⠀⠀⠀⠀⡇⢀⡏⠀⢀⣴⣿⣿⣿⣿⣾⣿⣿⣧⡀⢳⠀⢸⡁⠀
+⠀⠀⠀⠀⠀⠀⢣⠸⣅⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⡀⣸⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠘⣦⣿⣿⡿⠛⠻⢿⣿⣿⣿⣿⡟⠉⠙⢿⣿⣇⠀⠀⠀⣀⣠⡄⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⡿⠀⠀⣿⡟⣿⣿⣿⣿⢸⣷⠀⠈⣿⣿⣤⠶⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠚⠉⠉⠉⠙⠒⠲⣿⣿⣷⠀⠀⠙⢡⣿⣿⣽⣿⣌⠁⠀⣰⣿⣿⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢀⣠⠽⢿⣿⣿⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀⠀⠀⠉⠑⠒⠠⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⣀⠴⠚⠉⠀⠀⠀⠙⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣿⣿⣿⣿⡍⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧)" << endl;
+
+    cout << "\n\033[35mwelcome to mogOS\033[0m\ntype \"help\" for help\n\n";
     
     while(true) {
         Folder* result = input(currentDirectory);
