@@ -28,7 +28,7 @@ Folder* search(Folder* currentDirectory, string searchFolder) {
 }
 
 void help() {
-    cout << "\ncommands:\n-pwd (show current dir)\n-mkdir (create new dir)\n-cd (change dir)\n-rm (remove dir)\n-ls (list content of dir)\n-mv (move (and rename) dir)\n-clear (clear the screen)\n-exit (exit mogOs)\n\n";
+    cout << "\ncommands:\n-pwd (show current dir)\n-mkdir (create new dir)\n-cd (change dir)\n-rm (remove dir)\n-ls (list content of dir)\n-mv (move (and rename) dir)\n-tree (show filesystem structure)\n-clear (clear the screen)\n-exit (exit mogOs)\n\n";
 }
 
 void pwd(Folder* currentDirectory) {
@@ -192,6 +192,22 @@ void ls(Folder* currentDirectory, string name) {
     }
 }
 
+void tree(Folder* currentDirectory, int depth) {
+    if(depth == 0) {
+        while(currentDirectory->name != "/") {
+            currentDirectory = currentDirectory->parent;
+        }
+        cout << currentDirectory->name << endl;
+    }
+    for(int i = 0; i<currentDirectory->children.size(); i++) {
+        for(int j = 0; j<depth+1; j++) {
+            cout << "\t";
+        }
+        cout << currentDirectory->children[i]->name << endl;
+        tree(currentDirectory->children[i], depth+1);
+    }
+}
+
 Folder* input(Folder* currentDirectory) {
     string input;
     cout << currentDirectory->name << " > ";
@@ -275,6 +291,10 @@ Folder* input(Folder* currentDirectory) {
             else {newName = command[3];}
 
             currentDirectory = mv(currentDirectory, name, target, newName);
+        }
+        else if(command[0] == "tree") {
+            vector<Folder> content; // empty
+            tree(currentDirectory, 0);
         }
         else {
             cout << "command \"" << command[0] << "\" not found" << endl;
