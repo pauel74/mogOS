@@ -28,7 +28,7 @@ Folder* search(Folder* currentDirectory, string searchFolder) {
 }
 
 void help() {
-    cout << "\ncommands:\n-pwd (show current dir)\n-mkdir (create new dir)\n-cd (change dir)\n-rm (remove dir)\n-ls (list content of dir)\n-mv (move (and rename) dir)\n-tree (show filesystem structure)\n-clear (clear the screen)\n-exit (exit mogOs)\n\n";
+    cout << "\ncommands:\n-pwd (show current dir)\n-mkdir (create new dir)\n-cd (change dir)\n-rm (remove dir)\n-ls (list content of dir)\n-mv (move (and rename) dir, use \"keep\" as an argument to keep name or position)\n-tree (show filesystem structure)\n-clear (clear the screen)\n-exit (exit mogOs)\n\n";
 }
 
 void pwd(Folder* currentDirectory) {
@@ -89,10 +89,18 @@ void mkdir(Folder* currentDirectory, string name) {
 
 Folder* mv(Folder* currentDirectory, string name, string targetLocation, string newName) {
 
+    
     Folder* targetPtr = search(currentDirectory, name);
-
+    
     if(targetPtr == nullptr) {
         cout << "\"" << name << "\" was not found\n";
+        return currentDirectory;
+    }
+    
+    // keep position
+    if(targetLocation == "keep") {
+        targetPtr->name = newName;
+        cout << "Renamed \"" << name << "\" into \"" << newName << "\" successfully\n";
         return currentDirectory;
     }
 
@@ -101,9 +109,9 @@ Folder* mv(Folder* currentDirectory, string name, string targetLocation, string 
     while(root->parent != nullptr) {
         root = root->parent;
     }
-
+    
     Folder* targetPosition = search(root, targetLocation);
-
+    
     if(targetPosition == nullptr) {
         cout << "\"" << targetLocation << "\" was not found\n";
         return currentDirectory;
@@ -123,6 +131,10 @@ Folder* mv(Folder* currentDirectory, string name, string targetLocation, string 
     if(newName == "keep") {
         newName = name;
     }
+    else {
+        cout << "Renamed \"" << name << "\" into \"" << newName << "\" successfully\n";
+    }
+
 
     Folder* oldParent = targetPtr->parent;
 
@@ -137,7 +149,7 @@ Folder* mv(Folder* currentDirectory, string name, string targetLocation, string 
     targetPtr->name = newName;
     targetPosition->children.push_back(targetPtr);
 
-    cout << "Moved \"" << name << "\" into \"" << newName << "\" successfully\n";
+    cout << "Moved \"" << name << "\" into \"" << targetLocation << "\" successfully\n";
 
     return currentDirectory;
 }
@@ -201,9 +213,9 @@ void tree(Folder* currentDirectory, int depth) {
     }
     for(int i = 0; i<currentDirectory->children.size(); i++) {
         for(int j = 0; j<depth+1; j++) {
-            cout << "  ";
+            cout << "   ";
         }
-        cout << "└─ " << currentDirectory->children[i]->name << endl;
+        cout << "└─ /" << currentDirectory->children[i]->name << endl;
         tree(currentDirectory->children[i], depth+1);
     }
 }
