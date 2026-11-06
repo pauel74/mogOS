@@ -201,14 +201,15 @@ void tree(Folder* currentDirectory, int depth) {
     }
     for(int i = 0; i<currentDirectory->children.size(); i++) {
         for(int j = 0; j<depth+1; j++) {
-            cout << "   ";
+            cout << "  ";
         }
-        cout << currentDirectory->children[i]->name << endl;
+        cout << "└─ " << currentDirectory->children[i]->name << endl;
         tree(currentDirectory->children[i], depth+1);
     }
 }
 
 Folder* input(Folder* currentDirectory) {
+    cout << "\033[0m";
     string input;
     cout << currentDirectory->name << " > ";
 
@@ -218,9 +219,9 @@ Folder* input(Folder* currentDirectory) {
     stringstream ss(input);
     string part;
     vector<string> command;
-
+    
     command.clear();
-
+    
     while(getline(ss, part, ' ')) {
         command.push_back(part);
     }
@@ -302,7 +303,6 @@ Folder* input(Folder* currentDirectory) {
             cout << "command \"" << command[0] << "\" not found" << endl;
         }
     }
-    cout << "\033[0m";
     return currentDirectory;
 }
 
